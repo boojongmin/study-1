@@ -180,3 +180,41 @@ public static RequestPredicate queryParam(String name, Predicate<String> predica
 
 ```
 
+
+
+소스 분석중
+```
+	// router -> handler predicate and get handler
+	@Test
+	public void t1() throws URISyntaxException {
+		List<String> list = Arrays.asList("a", "2");
+		Flux<String> flux = Flux.fromIterable(list);
+		Flux<String> flux1 = flux.concatMap(m -> Flux.just(m));
+		System.out.println(flux1.take(5).collectList().block());
+
+		RouterFunction<ServerResponse> rf = route(GET("/hello"), x -> ServerResponse.ok().build());
+		System.out.println(rf);
+		MockServerRequest req = MockServerRequest.builder().uri(new URI("/hello")).build();
+		Mono<HandlerFunction<ServerResponse>> route = rf.route(req);
+		System.out.println(route.block() != null);
+		System.out.println(route.subscribe(x -> System.out.println(x.handle(req).block().statusCode())).isDisposed());
+
+
+		MockServerRequest req2 = MockServerRequest.builder().uri(new URI("/hello2")).build();
+		Mono<HandlerFunction<ServerResponse>> route2 = rf.route(req2);
+		System.out.println(route2.block() == null);
+
+
+
+//		flux.concatMap(m -> Flux.just("asdf", "zxcv"))
+//				.next()
+//				.switchIfEmpty(Mono.error(new Exception()))
+//				.map(x -> "asdfasf")
+//				.
+//				;
+//		System.out.println(block);
+
+	}
+
+
+```
